@@ -1,6 +1,6 @@
 package com.example.alttodolist.controller;
 
-import com.example.alttodolist.DTO.TodoDTO;
+import com.example.alttodolist.dto.TodoDto;
 import com.example.alttodolist.entity.TodoEntity;
 import com.example.alttodolist.service.TodoService;
 import lombok.RequiredArgsConstructor;
@@ -18,26 +18,26 @@ public class TodoController {
 
     // 조회
     @GetMapping
-    public ResponseEntity<List<TodoDTO>> getAllTodos() {
+    public ResponseEntity<List<TodoDto>> getAllTodos() {
         List<TodoEntity> entities = todoService.findAllTodos();
 
-        List<TodoDTO> todoDTOList = entities.stream().map(entity -> {
-            TodoDTO dto = new TodoDTO();
+        List<TodoDto> todoDtoList = entities.stream().map(entity -> {
+            TodoDto dto = new TodoDto();
             dto.setTodo(entity.getTodo());
             dto.setComplete(entity.isComplete());
             return dto;
         }).toList();
 
-        return ResponseEntity.ok(todoDTOList);
+        return ResponseEntity.ok(todoDtoList);
     }
 
     // 단일 조회
     @GetMapping("/{id}")
-    public ResponseEntity<TodoDTO> getTodo(@PathVariable Long id) {
+    public ResponseEntity<TodoDto> getTodo(@PathVariable Long id) {
         TodoEntity entity = todoService.findTodoEntity(id)
                 .orElseThrow(() -> new RuntimeException("Todo Not Found :)"));
 
-        TodoDTO dto = new TodoDTO();
+        TodoDto dto = new TodoDto();
         dto.setTodo(entity.getTodo());
         dto.setComplete(entity.isComplete());
 
@@ -46,7 +46,7 @@ public class TodoController {
 
     // 등록
     @PostMapping
-    public ResponseEntity<String> createTodo(@RequestBody TodoDTO dto) {
+    public ResponseEntity<String> createTodo(@RequestBody TodoDto dto) {
         System.out.println(dto.isComplete());
         todoService.saveTodo(dto);
         return ResponseEntity.ok("등록 성공");
@@ -54,7 +54,7 @@ public class TodoController {
 
     // 수정
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateTodo(@PathVariable Long id, @RequestBody TodoDTO dto) {
+    public ResponseEntity<String> updateTodo(@PathVariable Long id, @RequestBody TodoDto dto) {
         todoService.editTodo(id, dto);
         return ResponseEntity.ok("수정 성공");
     }

@@ -1,6 +1,6 @@
 package com.example.alttodolist.service;
 
-import com.example.alttodolist.DTO.TodoDTO;
+import com.example.alttodolist.dto.TodoDto;
 import com.example.alttodolist.entity.TodoEntity;
 import com.example.alttodolist.repository.TodoRepository;
 import jakarta.transaction.Transactional;
@@ -26,7 +26,7 @@ public class TodoServiceImpl implements TodoService{
     }
 
     @Override
-    public void saveTodo(TodoDTO dto) {
+    public void saveTodo(TodoDto dto) {
         TodoEntity todoEntity = new TodoEntity();
         todoEntity.setTodo(dto.getTodo());
         todoEntity.setComplete(dto.isComplete());
@@ -35,7 +35,7 @@ public class TodoServiceImpl implements TodoService{
 
     @Override
     @Transactional
-    public void editTodo(Long id, TodoDTO dto) {
+    public void editTodo(Long id, TodoDto dto) {
         TodoEntity todoEntity = todoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("todoEntity Not Found :)"));
 
