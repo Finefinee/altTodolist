@@ -1,14 +1,14 @@
 package com.example.alttodolist.service;
 
-import com.example.alttodolist.dto.TodoDto;
+import com.example.alttodolist.dto.TodoRequest;
 import com.example.alttodolist.entity.TodoEntity;
+import com.example.alttodolist.exception.TodoNotFoundException;
 import com.example.alttodolist.repository.TodoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,32 +21,32 @@ public class TodoServiceImpl implements TodoService{
     }
 
     @Override
-    public Optional<TodoEntity> findTodoEntity(Long id) {
-        return todoRepository.findById(id);
+    public TodoEntity findTodoEntity(Long id) {
+        return todoRepository.findById(id)
+                .orElseThrow(() -> new TodoNotFoundException(id));
     }
 
     @Override
-    public void saveTodo(TodoDto dto) {
+    public void saveTodo(TodoRequest request) {
         TodoEntity todoEntity = new TodoEntity();
-        todoEntity.setTodo(dto.getTodo());
-        todoEntity.setComplete(dto.isComplete());
+        todoEntity.setTodo(request.getTodo());
+        todoEntity.setComplete(request.getComplete());
         todoRepository.save(todoEntity);
     }
 
     @Override
     @Transactional
-    public void editTodo(Long id, TodoDto dto) {
-        TodoEntity todoEntity = todoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("todoEntity Not Found :)"));
+    public void editTodo(Long id, TodoRequest request) {
+        TodoEntity todoEntity = findTodoEntity(id);
 
-        todoEntity.setTodo(dto.getTodo());
-        todoEntity.setComplete(dto.isComplete());
+        todoEntity.setTodo(request.getTodo());
+        todoEntity.setComplete(request.getComplete());
     }
 
     @Override
     public void deleteTodo(Long id) {
         if (!todoRepository.existsById(id)) {
-            throw new RuntimeException("todoEntity Not Found :)");
+            throw new TodoNotFoundException(id);
         }
         todoRepository.deleteById(id);
     }
